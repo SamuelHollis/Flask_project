@@ -4,7 +4,7 @@ from pickle import load
 app = Flask(__name__)
 model = load(open(r"C:\Users\samue\OneDrive\Escritorio\Docs\4GeeksAcademy\29a clase-Despliegue_modelos_AI_en_Render.com_usando_Flask\Flask_project\src\decision_tree_regressor_default_42.sav", "rb"))
 
-def home():
+def index():
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
