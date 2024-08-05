@@ -8,8 +8,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 app = Flask(__name__)
 
 # Cargar el modelo y el vectorizador
-model_path = r"..\src\npl_good_42.sav"
-vectorizer_path = r"..\src\vectorizer_42.sav"
+model_path = "C:/Users/samue/OneDrive/Escritorio/Docs/4GeeksAcademy/29a clase-Despliegue_modelos_AI_en_Render.com_usando_Flask/Flask_project/src/npl_good_42.sav"
+vectorizer_path = "C:/Users/samue/OneDrive/Escritorio/Docs/4GeeksAcademy/29a clase-Despliegue_modelos_AI_en_Render.com_usando_Flask/Flask_project/src/vectorizer_42.sav"
 model = load(open(model_path, "rb"))
 vectorizer = load(open(vectorizer_path, "rb"))
 @app.route("/", methods=["GET", "POST"])
