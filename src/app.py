@@ -6,12 +6,19 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 app = Flask(__name__)
+import os
 
-# Cargar el modelo y el vectorizador
-model_path = r"C:\Users\samue\OneDrive\Escritorio\Docs\4GeeksAcademy\29a clase-Despliegue_modelos_AI_en_Render.com_usando_Flask\Flask_project\src\models\npl_good_42.sav"
-vectorizer_path = r"C:\Users\samue\OneDrive\Escritorio\Docs\4GeeksAcademy\29a clase-Despliegue_modelos_AI_en_Render.com_usando_Flask\Flask_project\src\models\vectorizer_42.sav"
+# Obtener el directorio actual del script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construir rutas relativas a partir del directorio actual
+model_path = os.path.join(current_dir, "models", "npl_good_42.sav")
+vectorizer_path = os.path.join(current_dir, "models", "vectorizer_42.sav")
+
+# Cargar el modelo y el vectorizador usando rutas relativas
 model = load(open(model_path, "rb"))
 vectorizer = load(open(vectorizer_path, "rb"))
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     prediction_text = None
@@ -31,6 +38,7 @@ def index():
             # Eliminar tags
             text = re.sub("&lt;/?.*?&gt;", " &lt;&gt; ", text)
             return text
+        
         # Llamamos al lematizador
         download('wordnet')
         lemmatizer = WordNetLemmatizer()
@@ -42,17 +50,23 @@ def index():
             # sacamos stop words
             tokens = [word for word in tokens if word not in stop_words]
             return tokens
+        
         processed_url = preprocess_text(user_url)
         lemmatized_url = lemmatize_text(processed_url.split())
         tokens_list = [' '.join(lemmatized_url)]
+
         # Asegurarse de que el vectorizador es un objeto TfidfVectorizer
         if not isinstance(vectorizer, TfidfVectorizer):
             raise TypeError("El vectorizador cargado no es un objeto TfidfVectorizer.")
         user_url_vectorized = vectorizer.transform(tokens_list).toarray()
+
         # Realizar la predicción
         prediction = model.predict(user_url_vectorized)[0]
+
         # Determinar el resultado
         prediction_text = 'Spam' if prediction == 1 else 'Not Spam'
     return render_template("index.html", prediction=prediction_text)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
